@@ -32,7 +32,7 @@ public class ReceptorUDP {
         int numSecuenciaEsperado = 0; //el próximo numero de secuencia que se espera recibir.
         boolean transferenciaCompleta = false; // bandera para verificar si se completó la transferencia.
         String mensajeRe = "";
-        int numPaquete = 1;
+        int numPaquete = 0;
 
         //Se crean los sockets.
         try {
@@ -81,16 +81,16 @@ public class ReceptorUDP {
                             if(numeroSecuencia == 0 && numSecuenciaPrevio == -1){
                                 mensajeRe = mensajeRe + "ip: " + paqueteEntrada.getAddress() + "\n";
                                 mensajeRe = mensajeRe + "puerto: " + paqueteEntrada.getPort() + "\n";
-                                mensajeRe = mensajeRe + new String(paqueteEntrada.getData(), 0 , paqueteEntrada.getLength());
+                                mensajeRe = mensajeRe + "mensaje: " + new String(paqueteEntrada.getData(), 0 , paqueteEntrada.getLength());
                                 System.out.println("Receptor: Paquete # " + numPaquete + " recibido.");
                                 numPaquete++;
-                            } else{ //Si no es el primero, solo concatene al string del mensaje y actualice los numeros de secuencia.
-                                mensajeRe = mensajeRe + new String(paqueteEntrada.getData(), 0 , paqueteEntrada.getLength());
+                            } else { //Si no es el primero, solo concatene al string del mensaje y actualice los numeros de secuencia.
+                                mensajeRe = mensajeRe + new String(paqueteEntrada.getData(), 0, paqueteEntrada.getLength());
                                 System.out.println("Receptor: Paquete # " + numPaquete + " recibido.");
+                            }
                                 numPaquete++;
                                 numSecuenciaEsperado++;
                                 numSecuenciaPrevio = numeroSecuencia;
-                            }
                         } else{ //Si el paquete no se recibió en el orden esperado, envíe ACK duplicado.
                             byte[] paqueteACK = generarPaquete(numSecuenciaPrevio);
                             socket2.send(new DatagramPacket(paqueteACK, paqueteACK.length, direccionDest, puertoSocket2));
@@ -104,7 +104,7 @@ public class ReceptorUDP {
                     }
                 }
                 System.out.println("Receptor: Transferencia completa " + "\n");
-                System.out.println("Receptor: Mensaje recibido: " + "\n" + mensajeRe + "\n");
+                System.out.println("Receptor: -Mensaje recibido- " + "\n" + mensajeRe + "\n");
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -112,8 +112,8 @@ public class ReceptorUDP {
             } finally {
                 socket1.close();
                 socket2.close();
-                System.out.println("Receptor: socket1 cerrado.");
-                System.out.println("Receptor: socket2 cerrado.");
+                System.out.println("Receptor: socket de entrada cerrado.");
+                System.out.println("Receptor: socket de salida cerrado.");
             }
 
         } catch (SocketException e1) {
