@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ProyectoRedesServidor.iml" filepath="$PROJECT_DIR$/ProyectoRedesServidor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ProyectoRedesReceptor.iml" filepath="$PROJECT_DIR$/ProyectoRedesReceptor.iml" />
     </modules>
   </component>
 </project>
