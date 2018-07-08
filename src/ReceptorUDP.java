@@ -63,7 +63,10 @@ public class ReceptorUDP {
                         if(numeroSecuencia == numSecuenciaEsperado) {
                             //si es el paquete final (sin datos), se envía el ack para terminar.
                             if(paqueteEntrada.getLength() == 12) {
-                                byte[] paqueteACK = generarPaquete(-2);
+                                byte[] paqueteACK = generarPaquete(numeroSecuencia); //ACK para el último paquete recibido.
+                                socket2.send(new DatagramPacket(paqueteACK, paqueteACK.length, direccionDest, puertoSocket2)); //Envía ACK para el último paquete recibido.
+                                System.out.println("Receptor: ACK Enviado " + numeroSecuencia);
+                                paqueteACK = generarPaquete(-2); //Genera un ACK -2 para indicar que finalizó la transmisión.
                                 //envía 20 acks en caso de que el último ack no haya sido recibido por el emisor (Se asegura de que termine).
                                 for(int i = 0; i <= 20; i++){
                                     socket2.send(new DatagramPacket(paqueteACK, paqueteACK.length, direccionDest, puertoSocket2));
@@ -87,8 +90,8 @@ public class ReceptorUDP {
                             } else { //Si no es el primero, solo concatene al string del mensaje y actualice los numeros de secuencia.
                                 mensajeRe = mensajeRe + new String(paqueteEntrada.getData(), 0, paqueteEntrada.getLength());
                                 System.out.println("Receptor: Paquete # " + numPaquete + " recibido.");
-                            }
                                 numPaquete++;
+                            }
                                 numSecuenciaEsperado++;
                                 numSecuenciaPrevio = numeroSecuencia;
                         } else{ //Si el paquete no se recibió en el orden esperado, envíe ACK duplicado.
